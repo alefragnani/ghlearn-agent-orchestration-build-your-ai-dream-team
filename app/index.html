@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Pulse</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="page-header">
+    <p class="eyebrow">Contributor dashboard</p>
+    <h1>Project Pulse</h1>
+    <p class="intro">
+      Welcome to Project Pulse. Review the real-time status, priority, and recent activity of our active initiatives to see where your contributions are needed most.
+    </p>
+  </header>
+
+  <main class="page-main">
+    <section class="dashboard" aria-label="Project list" id="project-dashboard">
+      <p class="loading-message">Loading project updates…</p>
+    </section>
+  </main>
+
+  <script>
+    const dashboard = document.getElementById('project-dashboard');
+
+    const statusDetails = {
+      'active': { text: '● Active', className: 'badge-status-active' },
+      'at-risk': { text: '▲ At Risk', className: 'badge-status-at-risk' },
+      'blocked': { text: '✖ Blocked', className: 'badge-status-blocked' },
+      'paused': { text: '⏸ Paused', className: 'badge-status-paused' },
+      'shipped': { text: '✔ Shipped', className: 'badge-status-shipped' }
+    };
+
+    const priorityDetails = {
+      'high': { text: 'High ⬆', className: 'badge-priority-high' },
+      'medium': { text: 'Medium ➡', className: 'badge-priority-medium' },
+      'low': { text: 'Low ⬇', className: 'badge-priority-low' }
+    };
+
+    function createTextElement(tagName, className, textContent) {
+      const element = document.createElement(tagName);
+      if (className) {
+        element.className = className;
+      }
+      element.textContent = textContent;
+      return element;
+    }
+
+    function createBadge(label, details, fallbackClass) {
+      const badge = document.createElement('span');
+      badge.className = `badge ${details.className || fallbackClass}`;
+      badge.textContent = `${label}: ${details.text}`;
+      return badge;
+    }
+
+    function renderEmptyState() {
+      dashboard.innerHTML = '';
+      dashboard.appendChild(createTextElement(
+        'p',
+        'state-message',
+        'No active project updates yet. Check back soon for new contribution opportunities.'
+      ));
+    }
+
+    function renderErrorState() {
+      dashboard.innerHTML = '';
+      dashboard.appendChild(createTextElement(
+        'p',
+        'state-message error-message',
+        'We could not load project-data.json. Please run the dashboard through the local server and try again.'
+      ));
+    }
+
+    function renderProjects(projects) {
+      dashboard.innerHTML = '';
+
+      if (!Array.isArray(projects) || projects.length === 0) {
+        renderEmptyState();
+        return;
+      }
+
+      projects.forEach((project) => {
+        const status = statusDetails[project.status] || {
+          text: project.status || 'Unknown',
+          className: 'badge-status-unknown'
+        };
+        const priority = priorityDetails[project.priority] || {
+          text: project.priority || 'Unknown',
+          className: 'badge-priority-unknown'
+        };
+
+        const card = document.createElement('article');
+        card.className = 'project-card';
+
+        const cardHeader = document.createElement('div');
+        cardHeader.className = 'project-card-header';
+        cardHeader.appendChild(createTextElement('h2', '', project.name || 'Untitled Project'));
+        cardHeader.appendChild(createTextElement('p', 'project-owner', `Owner: ${project.owner || 'Unassigned'}`));
+
+        const meta = document.createElement('div');
+        meta.className = 'project-meta';
+        meta.appendChild(createBadge('Status', status, 'badge-status-unknown'));
+        meta.appendChild(createBadge('Priority', priority, 'badge-priority-unknown'));
+
+        const activity = createTextElement(
+          'p',
+          'recent-activity',
+          `Recent Activity: ${project.recentActivity || 'No recent activity reported.'}`
+        );
+
+        card.appendChild(cardHeader);
+        card.appendChild(meta);
+        card.appendChild(activity);
+        dashboard.appendChild(card);
+      });
+    }
+
+    fetch('./project-data.json')
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Project data request failed with status ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => renderProjects(data.projects))
+      .catch(() => renderErrorState());
+  </script>
+</body>
+</html>

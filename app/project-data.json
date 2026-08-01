@@ -1,0 +1,39 @@
+{
+  "projects": [
+    {
+      "name": "Contributor Onboarding Flow",
+      "owner": "Mona Singh",
+      "status": "active",
+      "recentActivity": "Updated the first-run checklist and merged two accessibility improvements.",
+      "priority": "high"
+    },
+    {
+      "name": "Release Readiness Tracker",
+      "owner": "Diego Ramos",
+      "status": "at-risk",
+      "recentActivity": "Dependency review found two late-breaking test failures that need owners.",
+      "priority": "high"
+    },
+    {
+      "name": "API Documentation Refresh",
+      "owner": "Priya Nair",
+      "status": "blocked",
+      "recentActivity": "Waiting on final endpoint examples from the platform team before publishing.",
+      "priority": "medium"
+    },
+    {
+      "name": "Community Metrics Cleanup",
+      "owner": "Jordan Lee",
+      "status": "paused",
+      "recentActivity": "Work is paused while the analytics schema migration completes.",
+      "priority": "low"
+    },
+    {
+      "name": "Mobile Navigation Polish",
+      "owner": "Avery Chen",
+      "status": "shipped",
+      "recentActivity": "Launched the responsive menu updates and documented follow-up ideas.",
+      "priority": "medium"
+    }
+  ]
+}
